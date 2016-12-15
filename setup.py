@@ -8,7 +8,6 @@ setup(
     url='',
     packages=find_packages(exclude=["bin", "build", "data", "dist", "kali.egg-info",
                                     "logs", "results", "scripts", "tests"]),
-    author_email='yumyai@gmail.com',
     license='Apache License 2.0',
     scripts=["bin/upapp"],
     install_requires=['h5py==2.6.0',
