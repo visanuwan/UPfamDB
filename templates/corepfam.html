@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<!-- Latest JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="/js/filterForTable.min.js"></script>
+<script type="text/javascript" src="/js/sorttable.js"></script>
+
+<style>
+   .jumbotron
+   {
+      background-color:#D8BFD8;
+   }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+<div class="jumbotron">
+  <h1 class="display-3">UPfamDB : Core Pfam domains</h1>
+  <p class="lead">A prototype of quick search of core pfam domains across 87,606 bacterial genomes</p>
+
+<!--   <form id="num_org_input">
+  <div class="row">
+    <div class='col-md-2'>
+    <input class="form-control" type="text" placeholder="87000" id="pfam_acc" />
+    </div>
+    <div class='col-md-2'>
+    <button type="button" id="action-button" class="btn btn-danger">Submit</button>
+    </div>
+  </div>
+  </form> -->
+
+   <form class="form-inline">
+      <div class="form-group">
+         <div class="input-group">
+            <input type="text" class="form-control" id="num_org" placeholder="87000">
+         </div>
+      </div>
+      <button type="button" class="btn btn-danger" id="action-button">Submit</button>
+   </form>
+
+  <!-- <p class="small">*** maximum number of input is 87606 which is number of all bacterial genome</p> -->
+</div>
+<div id="info">
+   <!-- <div id="content"></div> -->
+</div>
+</div>
+<!-- <script src="jquery/jquery-3.1.1.min.js"></script> -->
+<script>
+function submitNumOrg() {
+// $('#action-button').click(function() {
+   var num = $("#num_org").val();
+   var url = "/api/corepfam/";
+   var req = url.concat(num);
+
+   $.ajax({
+      url: req,
+      data: {
+         format: 'json'
+      },
+      error: function() {
+         $(".temp").remove();
+         $('#info').html('<h2 class="temp">ERROR : Check input value</h1><p class="temp">The value must be a number of organisms</p>');
+      },
+      success: function(data) {
+         // var d = JSON.stringify(data)
+         $(".temp").remove();
+
+         var title = $('<h2 class="temp">').text("number of core Pfam domains : ".concat(data.num_core_pfam));
+         var search_box = $('<input class="temp" id="searchInput" name="search" placeholder="Searching..."/>')
+         // var $description = $('<p class="temp">').text(data.pfam_data.length);
+         $('#info')
+            .append(title)
+            .append(search_box)
+
+         var table = $('<table class="temp table table-hover" id="pfam_table">');
+         var thead = $('<thead>');
+         var tbody = $('<tbody>');
+         var tr = $('<tr>');
+               tr.append($('<th data-field="Pfam_accession">').text("PfamAcc"))
+               .append($('<th data-field="num_sum_org">').text("Distribution"))
+               .append($('<th data-field="clan_accession">').text("ClanAcc"))
+               .append($('<th data-field="clan_ID">').text("ClanID"))
+               .append($('<th data-field="PfamID">').text("PfamID"))
+               .append($('<th data-field="Pfam_description">').text("PfamDesc"));
+
+         thead.append(tr);
+         table.append(thead);
+         
+
+         for (var i = 0; i < data.pfam_data.length; i++) {
+            tr = $('<tr>')
+            .append("<td><a target='_blank' href=http://pfam.xfam.org/family/"+ data.pfam_data[i].Pfam_accession +">" + data.pfam_data[i].Pfam_accession + "</a></td>")
+            .append("<td>" + data.pfam_data[i].num_sum_org + "</td>")
+            .append("<td>" + data.pfam_data[i].clan_accession + "</td>")
+            .append("<td>" + data.pfam_data[i].clan_ID + "</td>")
+            .append("<td>" + data.pfam_data[i].PfamID + "</td>")
+            .append("<td>" + data.pfam_data[i].Pfam_description + "</td>");
+            tbody.append(tr);
+         }
+         table.append(tbody);
+         $('#info').append(table);
+
+         $('#pfam_table').filterForTable();
+         $('#pfam_table').addSortWidget();
+
+      },
+      type: 'GET'
+   });
+// });
+}
+
+$('#num_org').keypress(function(e) {
+if (e.which == '13') {
+         submitNumOrg();
+         return false;
+   }
+});
+
+$('#action-button').click(function(){
+    submitNumOrg();
+    return false;
+});
+
+</script>
+</div>
+
+</body>
+
+</html>

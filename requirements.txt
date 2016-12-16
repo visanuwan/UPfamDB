@@ -1,0 +1,16 @@
+aniso8601==1.2.0
+click==6.6
+Flask==0.11.1
+Flask-RESTful==0.3.5
+h5py==2.6.0
+itsdangerous==0.24
+Jinja2==2.8
+MarkupSafe==0.23
+numexpr==2.6.1
+numpy==1.11.2
+pandas==0.19.1
+python-dateutil==2.6.0
+pytz==2016.10
+six==1.10.0
+tables==3.3.0
+Werkzeug==0.11.11

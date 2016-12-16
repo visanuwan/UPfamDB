@@ -1,0 +1,6 @@
+flask
+flask_restful
+pandas
+numpy
+h5py
+tables

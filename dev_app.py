@@ -12,7 +12,7 @@ api = Api(app)
 DF_87606 = pd.read_hdf("data/added_pfam_matrix_87606genomes.hdf", key="pfam_matrix")
 DF_87606_sum = pd.DataFrame(DF_87606.sum())
 
-DF_Pfam28 = pd.read_csv("DataFrame/Pfam-A.clans.tsv.mod", delimiter="\t", dtype=str)
+DF_Pfam28 = pd.read_csv("data/Pfam-A.clans.tsv.mod", delimiter="\t", dtype=str)
 DF_Pfam28.fillna("", inplace=True)
 
 DF_87606_sum.index.name = "Pfam_accession"
@@ -29,12 +29,12 @@ class Pfam_Meta(Resource):
 class Core_Pfam(Resource):
 
     def get(self, number_org):
-        test_number = int(number_org)
+    	test_number = int(number_org)
 
-        # if test_number == 0:
-        #   core_pfam = DF_87606_sum[DF_87606_sum == 0]
-        # else:
-     #      core_pfam = DF_87606_sum[DF_87606_sum >= test_number]
+    	# if test_number == 0:
+    	# 	core_pfam = DF_87606_sum[DF_87606_sum == 0]
+    	# else:
+     #    	core_pfam = DF_87606_sum[DF_87606_sum >= test_number]
      #    num_core = len(core_pfam)
 
      #    pfam_detail = DF_Pfam28[DF_Pfam28.Pfam_accession.isin(core_pfam.index)].set_index('Pfam_accession').reset_index().to_dict(orient='records')
@@ -64,7 +64,7 @@ class Dist_Pfam(Resource):
             pfam_dict['num_organism'] = self.get_num_dist(pfam_acc)
             result_list.append(pfam_dict)
         # return json.dumps(result_list)
-        return result_list      
+        return result_list		
  
 api.add_resource(Dist_Pfam, '/api/distpfam/<str_pfam>')
 
@@ -93,5 +93,5 @@ def send_img(path):
     return send_from_directory('img', path)
 
 if __name__ == '__main__':
-    app.run(host= '0.0.0.0')
-    # app.run()
+    # app.run(host= '0.0.0.0')
+    app.run()

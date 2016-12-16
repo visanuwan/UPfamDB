@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<!-- Latest JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<!-- <script type="text/javascript" src="/js/filterForTable.min.js"></script> -->
+<script type="text/javascript" src="/js/sorttable.js"></script>
+
+<style>
+   .jumbotron
+   {
+      background-color:#B0E0E6;
+   }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+<div class="jumbotron">
+  <h1 class="display-3">UPfamDB : Pfam domain distribution</h1>
+  <p class="lead">A prototype of quick search of distribution of pfam domains across 87,606 bacterial genomes</p>
+
+<!--   <form id="num_org_input">
+  <div class="row">
+    <div class='col-md-2'>
+    <input class="form-control" type="text" placeholder="87000" id="pfam_acc" />
+    </div>
+    <div class='col-md-2'>
+    <button type="button" id="action-button" class="btn btn-danger">Submit</button>
+    </div>
+  </div>
+  </form> -->
+
+   <form class="form-inline">
+      <div class="form-group">
+         <div class="input-group">
+            <input type="text" class="form-control" id="pfam_acc" placeholder="PF00001,PF00002">
+         </div>
+      </div>
+      <button type="button" class="btn btn-danger" id="action-button">Submit</button>
+   </form>
+
+  <!-- <p class="small">*** maximum number of input is 87606 which is number of all bacterial genome</p> -->
+</div>
+<div id="info">
+   <!-- <div id="content"></div> -->
+</div>
+</div>
+<!-- <script src="jquery/jquery-3.1.1.min.js"></script> -->
+<script>
+function submitNumOrg() {
+// $('#action-button').click(function() {
+   var num = $("#pfam_acc").val();
+   var url = "/api/distpfam/";
+   var req = url.concat(num);
+
+   $.ajax({
+      url: req,
+      data: {
+         format: 'json'
+      },
+      error: function() {
+         $(".temp").remove();
+         $('#info').html('<h2 class="temp">ERROR : Check input value</h1><p class="temp">The value must be Pfam accessions with comma to separate them</p>');
+      },
+      success: function(data) {
+         // var d = JSON.stringify(data)
+         $(".temp").remove();
+
+         var title = $('<h2 class="temp">').text("number of Pfam domains : ".concat(data.length));
+         // var search_box = $('<input class="temp" id="searchInput" name="search" placeholder="Searching..."/>')
+         // var $description = $('<p class="temp">').text(data.pfam_data.length);
+         $('#info')
+            .append(title)
+            // .append(search_box)
+
+         var table = $('<table class="temp table table-hover" id="pfam_table">');
+         var thead = $('<thead>');
+         var tbody = $('<tbody>');
+         var tr = $('<tr>');
+               tr.append($('<th data-field="Pfam_accession">').text("PfamAcc"))
+               .append($('<th data-field="num_organism">').text("Distribution"));
+         thead.append(tr);
+         table.append(thead);
+         
+
+         for (var i = 0; i < data.length; i++) {
+            tr = $('<tr>')
+            .append("<td><a target='_blank' href=http://pfam.xfam.org/family/"+ data[i].pfam_acc +">" + data[i].pfam_acc + "</a></td>")
+            .append("<td>" + data[i].num_organism + "</td>");
+            tbody.append(tr);
+         }
+         table.append(tbody);
+         $('#info').append(table);
+
+         // $('#pfam_table').filterForTable();
+         $('#pfam_table').addSortWidget();
+
+      },
+      type: 'GET'
+   });
+// });
+}
+
+$('#pfam_acc').keypress(function(e) {
+if (e.which == '13') {
+         submitNumOrg();
+         return false;
+   }
+});
+
+$('#action-button').click(function(){
+    submitNumOrg();
+    return false;
+});
+
+</script>
+</div>
+
+</body>
+
+</html>
